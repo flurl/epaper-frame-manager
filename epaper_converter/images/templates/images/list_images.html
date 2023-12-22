@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+{% endblock head_css %}
+
+
+{% block head_js %}
+    {{ block.super }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js" async></script>
+    <script src="{% static 'js/scripts.js' %}" async></script>
+{% endblock head_js %}
+
+{% block content %}
+    <h1>User images</h1>
+
+    <ul id="images_list">
+        {% for img in images %}
+            <li>
+                <div>
+                    <img src="{{ img.original_image.url }}">
+                    
+                </div>
+            </li>
+        {% endfor %}    
+    </ul>
+
+    <div class="overlay hidden">
+        <button class="overlay-close">X</button>
+        <div class="overlay-image-container">
+          <img id="overlay-image" class="converted-img" src="" alt="Overlay Image" />
+          <!-- <div class="overlay-rectangle"></div> -->
+        </div>
+        <div class="overlay-controls">
+          <button class="edit-button">Edit</button>
+          <button class="delete-button">Delete</button>
+        </div>
+        <div class="overlay-editor-controls hidden">
+            <button class="cancel-button">Cancel</button>
+            <button class="save-button">Save</button>
+            <button class="rotate-left-button">&circlearrowleft;</button>
+            <button class="rotate-right-button">&circlearrowright;</button>
+        </div>
+      </div>
+  
+
+{% endblock content %}

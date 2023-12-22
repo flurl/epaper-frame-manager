@@ -1,0 +1,20 @@
+{
+    "folder-color.pathColors": [
+        {
+            "folderPath": "django/epaper_converter/images/",
+            "color": "foldercolorizer.LightRed"
+        },
+        {
+            "folderPath": "django/epaper_converter/epaper_converter/",
+            "color": "foldercolorizer.PureGold"
+        },
+        {
+            "folderPath": "django/epaper_converter/templates/",
+            "color": "foldercolorizer.SandyTan"
+        },
+        {
+            "folderPath": "django/epaper_converter/static/",
+            "color": "foldercolorizer.Bronze"
+        }
+    ]
+}

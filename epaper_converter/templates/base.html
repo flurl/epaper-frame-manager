@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Project</title>
+        
+        {% block head_css %}
+        <link rel="stylesheet" type="text/css" href='{% static "css/base.css" %}'>       
+        {% endblock head_css %}
+
+        {% block head_js %}{% endblock head_js %}
+
+    </head>
+
+    <body>
+
+    <a href="{% url "images:list_images" %}">List</a>
+    <a href="{% url "images:upload_image" %}">Upload new image</a>
+
+    {% block content %}{% endblock content %}
+
+    </body>
+</html>
