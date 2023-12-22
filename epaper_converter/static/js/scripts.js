@@ -217,8 +217,9 @@ class Editor {
 
     saveImage() {
         const csrftoken = getCookie('csrftoken');
-        const url = new URL(this.#imageSrc);
-        const src = url.pathname;
+        // const url = new URL(this.#imageSrc);
+        // const src = url.pathname;
+        const src = this.#imageSrc;
         const cropData = this.#cropper.getData();
         $.ajax('/images/convert',
             {
@@ -263,5 +264,5 @@ class Editor {
 
 $(() => {
     // $('.overlay').addClass('hidden');
-    $('#images_list img').on('click', (e) => editor.openImageInOverlay(e.target.src));
+    $('#images-list .images-list-image-container').on('click', (e) => editor.openImageInOverlay(e.target.style.backgroundImage.split('"')[1]));
 });

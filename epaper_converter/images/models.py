@@ -4,17 +4,24 @@ from django.core.files import File
 
 # Create your models here.
 
+# TODO: make this configurable
+FRAME_IMAGE_WIDTH = 448
+FRAME_IMAGE_HEIGHT = 600
+
 class Image(models.Model):
     original_image = models.ImageField(upload_to='images/')
     converted_image = models.ImageField(upload_to='images/converted/', null=True, blank=True)
+    offset_x = models.FloatField(default=0.0)
+    offset_y = models.FloatField(default=0.0)
+    width = models.FloatField(default=FRAME_IMAGE_WIDTH)
+    height = models.FloatField(default=FRAME_IMAGE_HEIGHT)
+    rotation = models.IntegerField(default=0)
 
-    # TODO: make this configurable
-    FRAME_IMAGE_WIDTH = 448
-    FRAME_IMAGE_HEIGHT = 600
+    
 
-    def convert(self, dimensions=None, offset=(0,0), rotate=0):
+    def convert(self, dimensions=None, offset=(0,0), rotation=0):
         if dimensions is None:
-            dim = (self.FRAME_IMAGE_WIDTH, self.FRAME_IMAGE_HEIGHT)
+            dim = (FRAME_IMAGE_WIDTH, FRAME_IMAGE_HEIGHT)
         else:
             dim = dimensions
         REMAP_FILE = "/home/flurl/raid/development/projects/epaper_frame/django/epaper_converter/images/eink-7color.png"        
@@ -27,7 +34,7 @@ class Image(models.Model):
         output_path = path_components[0] + '.bmp'
 
         # rotate it
-        cmd = f"convert {file_path} -rotate {rotate} +repage '{tmp_file}'"
+        cmd = f"convert {file_path} -rotate {rotation} +repage '{tmp_file}'"
         os.system(cmd)
         
         # crop it to supplied dimensions
@@ -37,12 +44,12 @@ class Image(models.Model):
             os.system(cmd)
 
         # resize the image to either fit width or height depending on orientation
-        size = f"{self.FRAME_IMAGE_WIDTH}x" if orientation == "portrait" else f"x{self.FRAME_IMAGE_HEIGHT}"
+        size = f"{FRAME_IMAGE_WIDTH}x" if orientation == "portrait" else f"x{FRAME_IMAGE_HEIGHT}"
         cmd = f"convert '{tmp_file}' -resize {size} '{tmp_file}'"
         os.system(cmd)
 
         # then crop it to FRAME_IMAGE_WIDTHxFRAME_IMAGE_HEIGHT
-        size = f"{self.FRAME_IMAGE_WIDTH}x{self.FRAME_IMAGE_HEIGHT}+0+0"
+        size = f"{FRAME_IMAGE_WIDTH}x{FRAME_IMAGE_HEIGHT}+0+0"
         cmd = f"convert {tmp_file} -crop {size} +repage '{tmp_file}'"
         os.system(cmd)
         
@@ -57,6 +64,9 @@ class Image(models.Model):
         self.converted_image.delete()
         converted_img = open(output_path, 'rb')
         self.converted_image.save(os.path.basename(output_path), File(converted_img))
+        self.offset_x, self.offset_y = offset
+        self.width, self.height = dim
+        self.rotation = rotation
         self.save()
         converted_img.close()
 

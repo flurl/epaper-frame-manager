@@ -2,18 +2,19 @@
     display: none;
 }
 
-#images_list li {
+#images-list li {
     display:inline-block;
 }
-#images_list img {
-    max-height: 33vh;
-    max-width: 20vw;
+
+.images-list-image-container {
+    width: 448px;
+    height: 600px;
     cursor: pointer;
 }
 
 
 .converted-img {
-    transform: rotate(-90deg);
+    transform: rotate(90deg);
 }
 
 
