@@ -16,6 +16,8 @@ class Image(models.Model):
     width = models.FloatField(default=FRAME_IMAGE_WIDTH)
     height = models.FloatField(default=FRAME_IMAGE_HEIGHT)
     rotation = models.IntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
 
     
 

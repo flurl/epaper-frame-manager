@@ -1,4 +1,7 @@
-from django.http import JsonResponse
+from datetime import datetime
+
+from django.core.exceptions import BadRequest
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from .forms import ImageUpload
@@ -29,3 +32,32 @@ def convert_image(request):
                     request.POST['rotate'])
         return JsonResponse({'status': 'OK'})
     return JsonResponse({'status': 'NOK'}, status=405)
+
+def get_updates(request):
+    since = 0
+    try:
+        since = request.POST['since']
+    except KeyError:
+        pass
+    try:
+        since = request.GET['since']
+    except KeyError:
+        pass
+
+    try:
+        since = int(since)
+    except ValueError:
+        since = 0
+
+    # TODO: for testing purpose only
+    since=0
+    
+    since_dt = datetime.utcfromtimestamp(since)
+
+    updated_images = Image.objects.filter(updated_at__gt=since_dt)
+
+    response = "%s\n" % int(datetime.now().timestamp())
+    for img in updated_images:
+        response += f"{'D' if img.deleted else 'U'} {request.build_absolute_uri(img.converted_image.url)}\n"
+
+    return HttpResponse(response, content_type='text/plain')
