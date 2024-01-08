@@ -1,6 +1,8 @@
 import os
 from django.db import models
 from django.core.files import File
+from django.conf import settings
+
 
 # Create your models here.
 
@@ -18,6 +20,7 @@ class Image(models.Model):
     rotation = models.IntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
     deleted = models.BooleanField(default=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     
 

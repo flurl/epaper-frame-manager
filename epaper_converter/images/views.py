@@ -13,7 +13,7 @@ from .decorators import basicauth
 
 @login_required
 def list_images(request):
-    images = Image.objects.all()
+    images = Image.objects.filter(user=request.user)
     return render(request, 'images/list_images.html', {'images': images})
 
 
@@ -22,7 +22,9 @@ def upload_image(request):
     if request.method == 'POST':
         form = ImageUpload(request.POST, request.FILES)
         if form.is_valid():
-            uploaded_image = form.save()
+            uploaded_image = form.save(commit=False)
+            uploaded_image.user = request.user
+            uploaded_image.save()
             uploaded_image.convert()
             #return redirect("")
     else:
@@ -35,7 +37,7 @@ def convert_image(request):
     if request.method == 'POST':
         src = request.POST['image'].removeprefix(settings.MEDIA_URL)
         print("img: ", src)
-        img = get_object_or_404(Image, original_image=src)
+        img = get_object_or_404(Image, original_image=src, user=request.user)
         img.convert((request.POST['width'], request.POST['height']), 
                     (request.POST['offsetX'], request.POST['offsetY']), 
                     request.POST['rotate'])
@@ -62,11 +64,11 @@ def get_updates(request):
         since = 0
 
     # TODO: for testing purpose only
-    since=0
+    #since=0
     
     since_dt = datetime.utcfromtimestamp(since)
 
-    updated_images = Image.objects.filter(updated_at__gt=since_dt)
+    updated_images = Image.objects.filter(user=request.user, updated_at__gt=since_dt)
 
     response = "%s\n" % int(datetime.now().timestamp())
     for img in updated_images:
