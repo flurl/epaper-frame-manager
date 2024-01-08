@@ -4,13 +4,20 @@ from django.core.exceptions import BadRequest
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+
 from .forms import ImageUpload
 from .models import Image
+from .decorators import basicauth
 
+
+@login_required
 def list_images(request):
     images = Image.objects.all()
     return render(request, 'images/list_images.html', {'images': images})
 
+
+@login_required
 def upload_image(request):
     if request.method == 'POST':
         form = ImageUpload(request.POST, request.FILES)
@@ -22,6 +29,8 @@ def upload_image(request):
         form = ImageUpload()
     return render(request, 'images/upload_image.html', {'form': form})
 
+
+@login_required
 def convert_image(request):
     if request.method == 'POST':
         src = request.POST['image'].removeprefix(settings.MEDIA_URL)
@@ -33,6 +42,9 @@ def convert_image(request):
         return JsonResponse({'status': 'OK'})
     return JsonResponse({'status': 'NOK'}, status=405)
 
+
+@basicauth
+#@login_required
 def get_updates(request):
     since = 0
     try:

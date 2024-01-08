@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-9#1&h86-+&l)t!8vnf91-11zbyz&@nmkkwwji_wthrw-2j-inm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.0.0.254']
 
 
 # Application definition
@@ -134,3 +134,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = '/images/list'
+BASIC_AUTH_REALM = 'e-paper frame'
