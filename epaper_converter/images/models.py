@@ -20,7 +20,7 @@ class Image(models.Model):
     rotation = models.IntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
     deleted = models.BooleanField(default=False)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
 
     
 
