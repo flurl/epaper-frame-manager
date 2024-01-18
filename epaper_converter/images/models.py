@@ -2,6 +2,7 @@ import os
 from django.db import models
 from django.core.files import File
 from django.conf import settings
+from django.apps import apps
 
 
 # Create your models here.
@@ -29,7 +30,7 @@ class Image(models.Model):
             dim = (FRAME_IMAGE_WIDTH, FRAME_IMAGE_HEIGHT)
         else:
             dim = dimensions
-        REMAP_FILE = "/home/flurl/raid/development/projects/epaper_frame/django/epaper_converter/images/eink-7color.png"        
+        REMAP_FILE = os.path.join(apps.get_app_config('images').path, "eink-7color.png")
 
         orientation = 'portrait' if self.original_image.height > self.original_image.width else 'landscape'
 
