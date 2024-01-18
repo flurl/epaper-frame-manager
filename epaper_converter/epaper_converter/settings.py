@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
+from .local_settings import local_settings as ls
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,9 +30,9 @@ with open(BASE_DIR / "epaper_converter/secret_key.txt") as f:
     SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = ls.get('DEBUG', False)
 
-ALLOWED_HOSTS = ['10.0.0.254']
+ALLOWED_HOSTS = ls.get('ALLOWED_HOSTS', [])
 
 
 # Application definition
