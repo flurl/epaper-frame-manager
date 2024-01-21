@@ -26,13 +26,18 @@ class Image(models.Model):
     
 
     def convert(self, dimensions=None, offset=(0,0), rotation=0):
+        orientation = 'portrait' if self.original_image.height > self.original_image.width else 'landscape'
         if dimensions is None:
-            dim = (FRAME_IMAGE_WIDTH, FRAME_IMAGE_HEIGHT)
+            if orientation == 'portrait':
+                w = FRAME_IMAGE_WIDTH * (self.original_image.width // FRAME_IMAGE_WIDTH)
+                h = FRAME_IMAGE_HEIGHT * (self.original_image.width // FRAME_IMAGE_WIDTH)
+            else:
+                w = FRAME_IMAGE_WIDTH * (self.original_image.height // FRAME_IMAGE_HEIGHT)
+                h = FRAME_IMAGE_HEIGHT * (self.original_image.height // FRAME_IMAGE_HEIGHT)
+            dim = (w, h)
         else:
             dim = dimensions
         REMAP_FILE = os.path.join(apps.get_app_config('images').path, "eink-7color.png")
-
-        orientation = 'portrait' if self.original_image.height > self.original_image.width else 'landscape'
 
         file_path = self.original_image.path
         path_components = os.path.splitext(file_path)
@@ -43,11 +48,10 @@ class Image(models.Model):
         cmd = f"convert {file_path} -rotate {rotation} +repage '{tmp_file}'"
         os.system(cmd)
         
-        # crop it to supplied dimensions
-        if dimensions is not None:
-            size = f"{dim[0]}x{dim[1]}+{offset[0]}+{offset[1]}"
-            cmd = f"convert {tmp_file} -crop {size} +repage '{tmp_file}'"
-            os.system(cmd)
+        # crop it
+        size = f"{dim[0]}x{dim[1]}+{offset[0]}+{offset[1]}"
+        cmd = f"convert {tmp_file} -crop {size} +repage '{tmp_file}'"
+        os.system(cmd)
 
         # resize the image to either fit width or height depending on orientation
         size = f"{FRAME_IMAGE_WIDTH}x" if orientation == "portrait" else f"x{FRAME_IMAGE_HEIGHT}"
