@@ -19,7 +19,7 @@
 
     <ul id="images-list">
         {% for img in images %}
-            <li>
+            <li id="image{{ img.pk }}">
                 <div class="images-list-image-container" style="background-repeat: no-repeat; background-image: url({{ img.original_image.url }}); background-size: calc(448px * {{ img.original_image.width }} / {{ img.width }}) calc(448px * {{ img.original_image.height }} / {{ img.width }}); background-position: calc(-{{ img.offset_x }} * 448px / {{ img.width }}) calc(-{{ img.offset_y }} * 448px / {{ img.width }})">
                     <!-- <img src="{{ img.original_image.url }}" style="width: {{ img.width }}px; height: {{ img.height }}px; object-fit: cover; object-position: {{ img.offset_x }}px {{ img.offset_y }}px;"> -->
                     

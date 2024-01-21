@@ -5,6 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 from .forms import ImageUpload
 from .models import Image
@@ -26,10 +27,14 @@ def upload_image(request):
             uploaded_image.user = request.user
             uploaded_image.save()
             uploaded_image.convert()
-            #return redirect("")
+            return redirect(reverse('images:upload_image_success', kwargs={'image_id': uploaded_image.pk}))
     else:
         form = ImageUpload()
     return render(request, 'images/upload_image.html', {'form': form})
+
+@login_required
+def upload_success(request, image_id):
+    return render(request, 'images/upload_success.html', {'image_id': image_id})
 
 
 @login_required

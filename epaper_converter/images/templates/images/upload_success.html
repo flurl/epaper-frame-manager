@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Upload successful</h1>
+
+    <p>The image was successfully uploaded. You will be redirected in <span id="countdown">5</span> seconds.</p>
+    <p><a href="{% url 'images:list_images' %}#image{{ image_id }}">Click here if the automatic redirect doesn't work.</a></p>
+    <script>
+        var count = 5;
+        var redirectUrl = "{% url 'images:list_images' %}#image{{ image_id }}";
+    
+        var intervalId = setInterval(function() {
+            document.getElementById("countdown").innerText = count;
+            count--;
+    
+            if (count === -1) {
+                clearInterval(intervalId);
+                window.location.href = redirectUrl;
+            }
+        }, 1000);
+    </script>
+
+{% endblock content %}
