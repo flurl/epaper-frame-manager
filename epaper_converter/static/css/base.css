@@ -1,3 +1,28 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #4a2700; /* Brown background */
+  color: #f0f0f0; /* Light text for better contrast */
+  padding: 20px;
+}
+
+a {
+  color: #fe9c00; /* Orange link color */
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  background-color: #fe9c00; /* Yellowish logout button */
+  color: #4a2700; /* Dark brown text */
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
 .hidden {
     display: none;
 }
