@@ -26,3 +26,16 @@ button {
 .hidden {
     display: none;
 }
+
+body > header {
+  border-bottom: 1px solid #fe9c00;
+  position: relative;
+  padding: 1em 0;
+  margin-bottom: 1em;
+}
+
+#logout-form {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
