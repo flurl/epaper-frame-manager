@@ -158,10 +158,12 @@ const IMG_HEIGHT = 600;
 class Editor {
     #cropper = null;
     #imageSrc = null;
+    #imageId = null;
 
     constructor () {
         $('.overlay-close').on('click', this.closeOverlay.bind(this));
-        $('.overlay-controls .edit-button').on('click', this.#editImage.bind(this));       
+        $('.overlay-controls .edit-button').on('click', this.#editImage.bind(this));
+        $('.overlay-controls .delete-button').on('click', this.#deleteImage.bind(this));
     }
     
     #convertImagePath(path) {
@@ -198,6 +200,19 @@ class Editor {
         $('.overlay .cancel-button').on('click', () => this.cancelEdit());
         $('.overlay .save-button').on('click', () => this.saveImage());
         this.#toggleControls();
+    }
+
+
+    #deleteImage() {
+        if (confirm('Are you sure that you want to delete this image?')) {
+            fetch(`/images/delete/${this.#imageId}`)
+            .then(response => {
+                alert('Image deleted.');
+                document.location.reload();
+            }).catch(reason => {
+                alert('Failed to delete the image!');
+            });
+        }
     }
 
 
@@ -244,8 +259,9 @@ class Editor {
     }
     
     
-    openImageInOverlay(src) {
+    openImageInOverlay(src, id) {
         this.#imageSrc = src;
+        this.#imageId = id;
         $('.overlay .overlay-controls').removeClass('hidden');
         $('.overlay .overlay-editor-controls').addClass('hidden');
         $("#overlay-image").attr("src", this.#convertImagePath(src));
@@ -264,5 +280,9 @@ class Editor {
 
 $(() => {
     // $('.overlay').addClass('hidden');
-    $('#images-list .images-list-image-container').on('click', (e) => editor.openImageInOverlay(e.target.style.backgroundImage.split('"')[1]));
+    $('#images-list .images-list-image-container').on('click', (e) => {
+        let src = e.target.style.backgroundImage.split('"')[1];
+        let id = e.target.dataset.imageId;
+        editor.openImageInOverlay(src, id);
+    });
 });

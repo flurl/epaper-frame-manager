@@ -80,3 +80,9 @@ def get_updates(request):
         response += f"{'D' if img.deleted else 'U'} {request.build_absolute_uri(img.converted_image.url)}\n"
 
     return HttpResponse(response, content_type='text/plain')
+
+
+@login_required
+def delete_image(request, image_id):
+    Image.objects.get(pk=image_id, user=request.user).delete()
+    return JsonResponse({'status': 'OK'})
