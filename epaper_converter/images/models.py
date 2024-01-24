@@ -12,8 +12,8 @@ FRAME_IMAGE_WIDTH = 448
 FRAME_IMAGE_HEIGHT = 600
 
 class Image(models.Model):
-    original_image = models.ImageField(upload_to='images/')
-    converted_image = models.ImageField(upload_to='images/converted/', null=True, blank=True)
+    original_image = models.ImageField(upload_to=lambda i, f: f"user_{i.user.id}/images/{f}")
+    converted_image = models.ImageField(upload_to=lambda i, f: f"user_{i.user.id}/images/converted/{f}", null=True, blank=True)
     offset_x = models.FloatField(default=0.0)
     offset_y = models.FloatField(default=0.0)
     width = models.FloatField(default=FRAME_IMAGE_WIDTH)
