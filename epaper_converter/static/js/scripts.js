@@ -157,6 +157,7 @@ const IMG_HEIGHT = 600;
 
 class Editor {
     #cropper = null;
+    #thumbSrc = null;
     #origImageSrc = null;
     #convertedImgSrc = null;
     #imageId = null;
@@ -210,6 +211,12 @@ class Editor {
         $('.overlay .overlay-editor-controls').toggleClass('hidden');
     }
 
+    async reloadImg() {
+        await fetch(this.#thumbSrc, { cache: 'reload', mode: 'no-cors' });
+        document.body.querySelectorAll(`img[src='${this.#thumbSrc}']`)
+          .forEach(img => img.src = this.#thumbSrc);
+    }
+
 
     cancelEdit() {
         try {
@@ -217,6 +224,7 @@ class Editor {
         } catch {}
         $("#overlay-image").attr("src", this.#convertedImgSrc);
         this.#toggleControls();
+        this.reloadImg();
     }
 
     saveImage() {
@@ -248,7 +256,8 @@ class Editor {
     }
     
     
-    openImageInOverlay(origImgSrc, convertedImgSrc, id) {
+    openImageInOverlay(thumbSrc, origImgSrc, convertedImgSrc, id) {
+        this.#thumbSrc = thumbSrc;
         this.#origImageSrc = origImgSrc;
         this.#convertedImgSrc = convertedImgSrc;
         this.#imageId = id;
@@ -271,9 +280,10 @@ class Editor {
 $(() => {
     // $('.overlay').addClass('hidden');
     $('#images-list .images-list-image-container img').on('click', (e) => {
+        let thumbSrc = e.target.getAttribute('src');
         let origImgSrc = e.target.dataset.originalImg;
         let convertedImgSrc = e.target.dataset.convertedImg;
         let id = e.target.dataset.imageId;
-        editor.openImageInOverlay(origImgSrc, convertedImgSrc, id);
+        editor.openImageInOverlay(thumbSrc, origImgSrc, convertedImgSrc, id);
     });
 });
