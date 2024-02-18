@@ -19,12 +19,9 @@
 
     <ul id="images-list">
         {% for img in images %}
-            <li id="image{{ img.pk }}">
-                <div class="images-list-image-container" 
-                     style="background-repeat: no-repeat; background-image: url({{ img.original_image.url }}); background-size: calc(448px * {{ img.original_image.width }} / {{ img.width }}) calc(448px * {{ img.original_image.height }} / {{ img.width }}); background-position: calc(-{{ img.offset_x }} * 448px / {{ img.width }}) calc(-{{ img.offset_y }} * 448px / {{ img.width }})"
-                     data-image-id="{{ img.pk }}">
-                    <!-- <img src="{{ img.original_image.url }}" style="width: {{ img.width }}px; height: {{ img.height }}px; object-fit: cover; object-position: {{ img.offset_x }}px {{ img.offset_y }}px;"> -->
-                    
+            <li id="image{{ img.pk }}">            
+                <div class="images-list-image-container" data-image-id="{{ img.pk }}">
+                    <img src="{{ img.thumbnail.url }}" data-image-id="{{ img.pk }}" data-converted-img="{{ img.converted_image.url }}" data-original-img="{{ img.original_image.url }}">
                 </div>
             </li>
         {% endfor %}    

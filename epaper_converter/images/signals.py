@@ -7,3 +7,4 @@ from .models import Image
 def on_image_delete(sender, instance, **kwargs):
     instance.original_image.delete(False)
     instance.converted_image.delete(False)
+    instance.thumbnail.delete(False)

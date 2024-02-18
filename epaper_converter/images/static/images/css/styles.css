@@ -4,14 +4,16 @@
 }
 
 .images-list-image-container {
-    width: 448px;
-    height: 600px;
+    max-width: 448px;
+    max-height: 600px;
+    /*aspect-ratio: 448/600;*/
     cursor: pointer;
-    background-size: cover;
-    background-position: center;
-    border: 1px solid #fe9c00; /* Yellowish border around images */
 }
 
+.images-list-image-container img {
+    width: 100%;
+    border: 1px solid #fe9c00; /* Yellowish border around images */
+}
 
 .converted-img {
     transform: rotate(90deg);

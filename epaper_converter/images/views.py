@@ -43,9 +43,9 @@ def convert_image(request):
         src = request.POST['image'].removeprefix(settings.MEDIA_URL)
         print("img: ", src)
         img = get_object_or_404(Image, original_image=src, user=request.user)
-        img.convert((request.POST['width'], request.POST['height']), 
-                    (request.POST['offsetX'], request.POST['offsetY']), 
-                    request.POST['rotate'])
+        img.convert((float(request.POST['width']), float(request.POST['height'])), 
+                    (float(request.POST['offsetX']), float(request.POST['offsetY'])), 
+                    int(request.POST['rotate']))
         return JsonResponse({'status': 'OK'})
     return JsonResponse({'status': 'NOK'}, status=405)
 

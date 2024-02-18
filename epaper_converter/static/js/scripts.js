@@ -157,7 +157,8 @@ const IMG_HEIGHT = 600;
 
 class Editor {
     #cropper = null;
-    #imageSrc = null;
+    #origImageSrc = null;
+    #convertedImgSrc = null;
     #imageId = null;
 
     constructor () {
@@ -166,20 +167,8 @@ class Editor {
         $('.overlay-controls .delete-button').on('click', this.#deleteImage.bind(this));
     }
     
-    #convertImagePath(path) {
-        var directories = path.split('/');
-        var filename = directories.pop();
-        var filenameParts = filename.split('.');
-        filenameParts[filenameParts.length - 1] = 'bmp';
-        var newFilename = filenameParts.join('.');
-        directories.push('converted');
-        directories.push(newFilename);
-        var newPath = directories.join('/');
-        return newPath;
-    }    
-    
     #editImage() {
-        let src = this.#imageSrc;
+        let src = this.#origImageSrc;
         $("#overlay-image").attr("src", src);
         const image = document.getElementById('overlay-image');
         this.#cropper = new Cropper(image, {
@@ -226,7 +215,7 @@ class Editor {
         try {
             this.#cropper.destroy();
         } catch {}
-        $("#overlay-image").attr("src", this.#convertImagePath(this.#imageSrc));
+        $("#overlay-image").attr("src", this.#convertedImgSrc);
         this.#toggleControls();
     }
 
@@ -234,7 +223,7 @@ class Editor {
         const csrftoken = getCookie('csrftoken');
         // const url = new URL(this.#imageSrc);
         // const src = url.pathname;
-        const src = this.#imageSrc;
+        const src = this.#origImageSrc;
         const cropData = this.#cropper.getData();
         $.ajax('/images/convert',
             {
@@ -259,12 +248,13 @@ class Editor {
     }
     
     
-    openImageInOverlay(src, id) {
-        this.#imageSrc = src;
+    openImageInOverlay(origImgSrc, convertedImgSrc, id) {
+        this.#origImageSrc = origImgSrc;
+        this.#convertedImgSrc = convertedImgSrc;
         this.#imageId = id;
         $('.overlay .overlay-controls').removeClass('hidden');
         $('.overlay .overlay-editor-controls').addClass('hidden');
-        $("#overlay-image").attr("src", this.#convertImagePath(src));
+        $("#overlay-image").attr("src", this.#convertedImgSrc);
         $('.overlay').removeClass('hidden');
     }
 
@@ -280,9 +270,10 @@ class Editor {
 
 $(() => {
     // $('.overlay').addClass('hidden');
-    $('#images-list .images-list-image-container').on('click', (e) => {
-        let src = e.target.style.backgroundImage.split('"')[1];
+    $('#images-list .images-list-image-container img').on('click', (e) => {
+        let origImgSrc = e.target.dataset.originalImg;
+        let convertedImgSrc = e.target.dataset.convertedImg;
         let id = e.target.dataset.imageId;
-        editor.openImageInOverlay(src, id);
+        editor.openImageInOverlay(origImgSrc, convertedImgSrc, id);
     });
 });

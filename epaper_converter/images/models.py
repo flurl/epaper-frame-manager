@@ -1,4 +1,6 @@
+from io import BytesIO
 import os
+from PIL import Image as Img
 from django.db import models
 from django.core.files import File
 from django.conf import settings
@@ -11,9 +13,23 @@ from django.apps import apps
 FRAME_IMAGE_WIDTH = 448
 FRAME_IMAGE_HEIGHT = 600
 
+
+# makemigrations failed when using lambdas for upload_to
+# see https://stackoverflow.com/questions/27072222/django-1-7-1-makemigrations-fails-when-using-lambda-as-default-for-attribute
+def upload_to(i, f):
+    return f"user_{i.user.id}/images/{f}"
+
+def upload_to_converted(i, f):
+    return f"user_{i.user.id}/images/converted/{f}"
+
+def upload_to_thumbs(i, f):
+    return f"user_{i.user.id}/images/thumbs/{f}"
+
+
 class Image(models.Model):
-    original_image = models.ImageField(upload_to=lambda i, f: f"user_{i.user.id}/images/{f}")
-    converted_image = models.ImageField(upload_to=lambda i, f: f"user_{i.user.id}/images/converted/{f}", null=True, blank=True)
+    original_image = models.ImageField(upload_to=upload_to)
+    converted_image = models.ImageField(upload_to=upload_to_converted, null=True, blank=True)
+    thumbnail = models.ImageField(upload_to=upload_to_thumbs, null=True, blank=True)
     offset_x = models.FloatField(default=0.0)
     offset_y = models.FloatField(default=0.0)
     width = models.FloatField(default=FRAME_IMAGE_WIDTH)
@@ -77,8 +93,26 @@ class Image(models.Model):
         self.offset_x, self.offset_y = offset
         self.width, self.height = dim
         self.rotation = rotation
-        self.save()
         converted_img.close()
 
         cmd = f"rm '{tmp_file}' '{output_path}'"
         os.system(cmd)
+
+        # create thumbnail
+        left = offset[0]
+        top = offset[1]
+        right = left + dim[0]
+        bottom = top + dim[1]
+
+        self.thumbnail.delete()
+        print("FILE: ", self.original_image.file)
+        print("PATH: ", self.original_image.path)
+        print("coords: ", (left, top, right, bottom))
+        with self.original_image.open() as f:
+            with Img.open(f) as pil_image:
+                thumb = pil_image.crop((left, top, right, bottom))
+                thumb_io = BytesIO()
+                thumb.save(thumb_io, 'jpeg')
+                self.thumbnail.save(os.path.basename(self.original_image.name), File(thumb_io))
+
+        self.save()
