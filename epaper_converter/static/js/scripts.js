@@ -166,6 +166,10 @@ class Editor {
         $('.overlay-close').on('click', this.closeOverlay.bind(this));
         $('.overlay-controls .edit-button').on('click', this.#editImage.bind(this));
         $('.overlay-controls .delete-button').on('click', this.#deleteImage.bind(this));
+        $('.overlay .rotate-left-button').on('click', () => this.#cropper.rotate(-90));
+        $('.overlay .rotate-right-button').on('click', () => this.#cropper.rotate(90));
+        $('.overlay .cancel-button').on('click', () => this.cancelEdit());
+        $('.overlay .save-button').on('click', () => this.saveImage());
     }
     
     #editImage() {
@@ -185,10 +189,6 @@ class Editor {
                 console.log(event.detail.scaleY);
             },
         });
-        $('.overlay .rotate-left-button').on('click', () => this.#cropper.rotate(-90));
-        $('.overlay .rotate-right-button').on('click', () => this.#cropper.rotate(90));
-        $('.overlay .cancel-button').on('click', () => this.cancelEdit());
-        $('.overlay .save-button').on('click', () => this.saveImage());
         this.#toggleControls();
     }
 
