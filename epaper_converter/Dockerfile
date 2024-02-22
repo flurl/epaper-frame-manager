@@ -3,6 +3,9 @@ FROM python:3.12-slim-bookworm
 # set work directory
 WORKDIR /usr/src/epaper_converter
 
+# set environment variables
+ENV PYTHONUNBUFFERED 1
+
 # install system dependencies
 RUN apt-get update && apt-get install -y imagemagick --no-install-recommends
 
