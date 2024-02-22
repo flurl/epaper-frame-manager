@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.core.exceptions import BadRequest
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -86,3 +86,17 @@ def get_updates(request):
 def delete_image(request, image_id):
     Image.objects.get(pk=image_id, user=request.user).delete()
     return JsonResponse({'status': 'OK'})
+
+
+@basicauth
+@login_required
+def private_image(request, user_id, filename):
+    if request.user.id  == int(user_id):
+        response = HttpResponse()
+        url = f"/private_media/user_{user_id}/{filename}"
+        # let nginx determine the correct content type 
+        response['Content-Type']=""
+        response['X-Accel-Redirect'] = url
+        return response
+    return HttpResponseForbidden()
+    
