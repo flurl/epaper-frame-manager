@@ -10,6 +10,8 @@ def basicauth(view):
     """Authenticate the user via HTTP Basic Authorization"""
     @wraps(view)
     def wrap(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return view(request, *args, **kwargs)
         if 'HTTP_AUTHORIZATION' in request.META:
             auth = request.META['HTTP_AUTHORIZATION'].split()
             if len(auth) == 2:
