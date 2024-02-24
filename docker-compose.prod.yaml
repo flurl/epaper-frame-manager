@@ -23,11 +23,26 @@ services:
       dockerfile: Dockerfile.prod
     volumes:
       - django_media:/usr/share/nginx/media/
+      - certbot_www:/usr/share/nginx/certbot/
+      - certbot_conf:/etc/letsencrypt/
     ports:
       - 80:80
+      - 443:443
     depends_on:
       - web
+      - certbot
+
+  certbot:
+    build: 
+      context: ./certbot
+      dockerfile: Dockerfile.prod
+    volumes:
+      - certbot_www:/var/www/certbot/
+      - certbot_conf:/etc/letsencrypt/
+
 
 volumes:
   django_sqlite:
   django_media:
+  certbot_www:
+  certbot_conf:
