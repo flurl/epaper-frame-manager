@@ -1,0 +1,33 @@
+# https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/
+
+services:
+  web:
+    build: 
+      context: ./epaper_converter
+      dockerfile: Dockerfile.prod
+    command: gunicorn epaper_converter.wsgi --bind 0.0.0.0:8000 --workers 5
+    volumes:
+      - django_sqlite:/home/epaper_manager/web/sqlite/
+      - django_media:/home/epaper_manager/web/media/
+      
+    expose:
+      - 8000
+    env_file:
+      - ./.env.prod
+
+  nginx:
+    build: 
+      context: ./nginx
+      additional_contexts:
+        static_root: ./static_root
+      dockerfile: Dockerfile.prod
+    volumes:
+      - django_media:/usr/share/nginx/media/
+    ports:
+      - 80:80
+    depends_on:
+      - web
+
+volumes:
+  django_sqlite:
+  django_media:
