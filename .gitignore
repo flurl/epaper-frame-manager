@@ -141,3 +141,5 @@ GitHub.sublime-settings
 # file with secret key
 secret_key.txt
 epaper_converter/epaper_converter/local_settings.py
+bfg.jar
+.env.prod
